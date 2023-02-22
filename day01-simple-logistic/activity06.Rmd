@@ -7,8 +7,35 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# Loading the Library
 ```{r}
 library(tidyverse)
 library(tidymodels)
+library(dplyr)
+```
+
+# Reading the dataset
+```{r}
+resume <- read.csv("https://www.openintro.org/data/csv/resume.csv")
+
+head(resume)
+
+```
+
+```{r}
+summary(resume)
+```
+
+```{r}
+# The {tidymodels} method for logistic regression requires that the response be a factor variable
+resume <- resume %>% 
+  mutate(received_callback = as.factor(received_callback))
+
+resume_mod <- logistic_reg() %>%
+  set_engine("glm") %>%
+  fit(received_callback ~ race, data = resume, family = "binomial")
+
+tidy(resume_mod) %>% 
+  knitr::kable(digits = 3)
 ```
 
